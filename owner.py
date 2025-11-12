@@ -10,7 +10,7 @@ owner_bp = Blueprint('owner', __name__)
 def owner_login():
     # Recebe os dados do usuário em JSON
     data = request.json
-    print(data)  # Debug
+    # print(data)  # Debug - Exibe o JSON que vem do front-end
 
     # Validação básica dos dados recebidos (ajuste conforme necessário)
     if not data or 'uid' not in data or 'email' not in data or 'createdAt' not in data or 'lastLoginAt' not in data:

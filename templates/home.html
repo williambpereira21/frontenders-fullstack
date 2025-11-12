@@ -2,7 +2,14 @@
 
 {% block content %}
 
-<h2>Página Inicial</h2>
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi odio voluptate, sunt architecto labore ipsum sapiente quidem et soluta beatae repellendus quam iure nemo ab dicta at accusantium sint? Deleniti.</p>
+<h2>Todos os Pads</h2>
+
+{% for pad in all_pads %}
+    <div class="pad">
+        <h4>{{ pad.pad_title }}</h4>
+        <p>{{ pad.pad_content_preview }}</p>
+        <small>por {{ pad.own_display_name }} em {{ pad.pad_created_at }}</small>
+    </div>
+{% endfor %}
 
 {% endblock %}
