@@ -41,8 +41,8 @@ const apiLoginEndpoint = '/owner/login';
  *     - Somente a rota → /user/logout ← Se o front-end está no mesmo domínio.
  * - Se vazio (""), não envia os dados para a API/backend;
  */
-// const apiLogoutEndpoint = '/user/logout'; // Exemplo
-const apiLogoutEndpoint = '';
+const apiLogoutEndpoint = '/owner/logout';
+// const apiLogoutEndpoint = '';
 
 /**
  * Configuração: mostra logs das ações no console
@@ -99,8 +99,8 @@ const googleLogout = async () => {
 
             if (response.ok) {
                 showLogs ? console.log('Logout bem-sucedido e cookie de sessão removido!') : null;
-                // Após logout bem-sucedido, redireciona para a home
-                window.location.href = '/home';
+                // Após logout bem-sucedido, redireciona para a home (/)
+                window.location.href = '/';
             } else {
                 showLogs ? console.error('Erro ao notificar o backend sobre o logout.') : null;
             }
