@@ -2,7 +2,28 @@
 
 {% block content %}
 
-<h2>Nome do Pad</h2>
-<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi odio voluptate, sunt architecto labore ipsum sapiente quidem et soluta beatae repellendus quam iure nemo ab dicta at accusantium sint? Deleniti.</p>
+<h2>{{ pad.pad_title}}</h2>
+
+<textarea name="" id="">{{ pad.pad_content}}</textarea>
+
+<div>
+
+                <small class="text-muted d-flex align-items-center gap-2">
+                    <img src="{{ pad.own_photo_url }}" alt="{{ pad.own_display_name }}"
+                        class="rounded-circle" width="28" height="28" referrerpolicy="no-referrer">
+                    <span>
+                        Por
+                        <a href="/owner/{{pad.pad_owner}}" title="Ver detalhes de {{ pad.own_display_name }}.">
+                            <strong>{{ pad.own_display_name }}</strong></a><br>
+                        Em <em>{{ pad.pad_created_at }}</em>
+                    </span>
+                </small>
+
+                {% if is_owner %}
+é dono
+                {% endif %}
+
+
+</div>
 
 {% endblock %}

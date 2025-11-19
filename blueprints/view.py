@@ -2,7 +2,7 @@
 # Exibe um único registro (pad) com detalhes
 
 import sqlite3
-from flask import Blueprint, render_template, request
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 from database import DB_NAME
 
 view_bp = Blueprint('view', __name__)
@@ -30,8 +30,24 @@ def search_page(pad_id):
 
     # Obtém o resultado da conulta
     row = cursor.fetchone()
+
+    # Se não encontrou o pad, redireciona para a '/'
+    if row is None:
+        # Pad não encontrado ou foi deletado → vai pra home com mensagem
+        flash('Este bloco de notas não existe ou foi removido.', 'info')
+        return redirect(url_for('home.home_page'))  # ajuste o nome do blueprint se necessário
     
     print('\n\n\n', row['pad_title'])
-    print(pad_id, owner_uid,'\n\n\n')
+    print(row['pad_owner'], owner_uid,'\n\n\n')
+
+    # Verifica se o usuário está logado e é owner do pad atual
+    if row['pad_owner'] == owner_uid:
+        is_owner = True
+    else:
+        is_owner = False
+
+    # Atualiza views do pad
+    cursor.execute("UPDATE pads SET pad_views = pad_views + 1 WHERE pad_id = ?", (pad_id,))
+    conn.commit()
     
     return render_template("view.html")
