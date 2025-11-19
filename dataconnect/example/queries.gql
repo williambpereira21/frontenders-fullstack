@@ -1,0 +1,42 @@
+# Query: Get all public posts, accessible to anyone.
+# Assumes a "Post" type with a "public" field (boolean).
+# Replace with actual schema details.
+query ListPublicPosts @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  posts(where: { public: { eq: true } }) {
+    id
+    title
+    content
+    createdAt
+  }
+}
+
+# Mutation: Create a new post, only accessible to signed-in users.
+# Assumes a "Post" type with fields: title, content, userUid.
+mutation CreatePost($title: String!, $content: String!) @auth(level: USER) {
+  post_insert(data: {
+    title: $title,
+    content: $content,
+    userUid_expr: "auth.uid"
+  })
+}
+
+# Mutation: Update an existing post, only accessible to the post's author.
+# Assumes a "Post" type with fields: id, title, content, userUid.
+mutation UpdatePost($id: UUID!, $title: String, $content: String) @auth(expr: "query GetPost($id: UUID!) { posts(where: { id: { eq: $id }, userUid: { eq_expr: \"auth.uid\" } }) { id } }.posts.length > 0") {
+  post_update(key: { id: $id }, data: {
+    title: $title,
+    content: $content
+  })
+}
+
+# Query: Get the current user's profile, only accessible to signed-in users.
+# Assumes a "User" type with a "uid" field.
+query GetMyProfile @auth(level: USER) {
+  users(where: { uid: { eq_expr: "auth.uid" } }) {
+    uid
+    displayName
+    email
+    avatarUrl
+    bio
+  }
+}

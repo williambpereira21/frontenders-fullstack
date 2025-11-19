@@ -1,0 +1,30 @@
+mutation CreateSeedData @transaction @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  # Replace with actual data for your schema
+  # Example assumes types User and Product with corresponding insertMany mutations
+  user_insertMany(data: [
+    {
+      id: "user1",
+      username: "testuser1",
+      email: "test1@example.com"
+    },
+    {
+      id: "user2",
+      username: "testuser2",
+      email: "test2@example.com"
+    }
+  ])
+  product_insertMany(data: [
+    {
+      id: "product1",
+      name: "Example Product 1",
+      description: "This is an example product.",
+      price: 19.99
+    },
+    {
+      id: "product2",
+      name: "Example Product 2",
+      description: "Another example product.",
+      price: 29.99
+    }
+  ])
+}
