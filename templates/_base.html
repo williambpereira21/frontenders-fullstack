@@ -30,17 +30,17 @@
 
                 <ul class="navbar-nav me-auto border-md-top-0 mt-3 mt-md-0 ps-4 ps-md-0">
                     <li class="nav-item mt-2 mt-md-0"><a class="nav-link active" href="/">Início</a> </li>
-                    <li class="nav-item mt-2 mt-md-0"><a class="nav-link is-logged d-none" href="/newpad">Novo</a></li>
+                    <li class="nav-item mt-2 mt-md-0"><a class="nav-link is-logged d-none" href="/new">Novo</a></li>
                     <li class="nav-item mt-2 mt-md-0"><a class="nav-link" href="/contacts">Contatos</a></li>
                     <li class="nav-item mt-2 mt-md-0"><a class="nav-link" href="/about">Sobre</a></li>
                 </ul>
 
                 <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mt-3 mt-md-0">
 
-                    <form class="order-2 order-md-1 w-100">
+                    <form class="order-2 order-md-1 w-100" method="get" action="/search">
                         <div class="input-group">
-                            <input class="form-control" type="text" placeholder="Procurar...">
-                            <button class="btn btn-secondary" type="button"><i class="bi bi-search"></i></button>
+                            <input class="form-control" type="text" name="q" placeholder="Procurar..." required minlength="2">
+                            <button class="btn btn-secondary" type="submit"><i class="bi bi-search"></i></button>
                         </div>
                     </form>
 
@@ -57,7 +57,20 @@
         </div>
     </nav>
 
-    <main class="container mt-5 p-4 bg-white flex-grow-1">
+    <main class="container mt-5 p-4 bg-white d-flex flex-column flex-grow-1">
+
+        {# Mensagens flash formatadas no Bootstrap 5 #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert" id="baseMainAlert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         {% block content %}{% endblock %}
     </main>
 
