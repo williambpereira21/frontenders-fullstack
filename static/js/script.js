@@ -1,4 +1,5 @@
 /**
+ * static\js\script.js
  * JavaScript do layout.
  * Template com autenticação de usuário pelo Google.
  * Referências desta página: https://firebase.google.com/docs/build?hl=pt-br
@@ -29,7 +30,7 @@ const userClickId = 'userInOutLink';
  * - Se "firebase", faz a persistência no projeto atual do Firebase Firestore, na coleção `Users`;
  */
 // const apiLoginEndpoint = 'firebase';
-const apiLoginEndpoint = '/owner/login'; // Exemplo
+const apiLoginEndpoint = '/owner/login';
 // const apiLoginEndpoint = '';
 
 /** 
@@ -42,7 +43,16 @@ const apiLoginEndpoint = '/owner/login'; // Exemplo
  * - Se vazio (""), não envia os dados para a API/backend;
  */
 // const apiLogoutEndpoint = '/user/logout'; // Exemplo
-const apiLogoutEndpoint = '';
+// const apiLogoutEndpoint = '';
+const apiLogoutEndpoint = '/owner/logout';
+
+/**
+ * Configuração: URL / rota da página inicial do aplicativo
+ * Informa para onde o usuário será enviado após o logout
+ * - Se vazio, não faz nada
+ */
+// const redirectOnLogout = ""
+const redirectOnLogout = "/"
 
 /**
  * Configuração: mostra logs das ações no console
@@ -85,30 +95,38 @@ const googleLogin = async () => {
 // Função para Logout
 const googleLogout = async () => {
     try {
-        // Limpa o estado no Firebase Authentication (do lado do cliente)
-        await auth.signOut();
+        let backendLogoutSuccess = true;
 
-        // Se configurou um endpoint de logout
-        if (apiLogoutEndpoint != "") {
+        // Notificar backend (se endpoint configurado)
+        if (apiLogoutEndpoint) {
+            try {
+                const response = await fetch(apiLogoutEndpoint, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json', },
+                    body: JSON.stringify({ action: "logout", redirectTo: redirectOnLogout })
+                });
 
-            const response = await fetch(apiLogoutEndpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: "logout" })
-            });
+                backendLogoutSuccess = response.ok;
 
-            if (response.ok) {
-                showLogs ? console.log('Logout bem-sucedido e cookie de sessão removido!') : null;
-                // Após logout bem-sucedido, redireciona para a home
-                window.location.href = '/home';
-            } else {
-                showLogs ? console.error('Erro ao notificar o backend sobre o logout.') : null;
+                if (!response.ok) {
+                    showLogs && console.warn('Backend logout falhou, mas continuando...');
+                } else {
+                    showLogs && console.log('Cookie removido pelo backend.');
+                }
+
+                window.location.href = '/';
+            } catch (err) {
+                showLogs && console.warn('Erro ao comunicar com backend:', err);
+                backendLogoutSuccess = false;
             }
         }
 
+        // Logout do Firebase (independente do backend)
+        await auth.signOut();
+
     } catch (error) {
-        showLogs ? console.error("Erro no logout:", error) : null;
-        alert('Erro ao fazer logout. Verifique o console para mais detalhes.');
+        showLogs && console.error("Erro inesperado no logout:", error);
     }
 };
 
@@ -310,16 +328,26 @@ const isoToTimestamp = (isoString) => {
 
 // Oculta o menu ao clicar em um item, em telas menores
 document.addEventListener('DOMContentLoaded', () => {
-  const navLinks = document.querySelectorAll('#mynavbar .nav-link');
-  const collapseElement = document.getElementById('mynavbar');
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      if (collapseElement.classList.contains('show')) {
-        const collapse = new bootstrap.Collapse(collapseElement);
-        collapse.hide();
-      }
+    const navLinks = document.querySelectorAll('#mynavbar .nav-link');
+    const collapseElement = document.getElementById('mynavbar');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (collapseElement.classList.contains('show')) {
+                const collapse = new bootstrap.Collapse(collapseElement);
+                collapse.hide();
+            }
+        });
     });
-  });
+});
+
+// Fecha caixas de alerta após 5 segundos
+const delayInMilliseconds = 5000;
+document.addEventListener('DOMContentLoaded', function () {
+    const alertElement = document.getElementById('baseMainAlert');
+    if (alertElement) {
+        const bsAlert = new bootstrap.Alert(alertElement);
+        setTimeout(function () { bsAlert.close(); }, delayInMilliseconds);
+    }
 });
 
 // Listener para o estado de autenticação
