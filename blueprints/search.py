@@ -35,7 +35,7 @@ def search_page():
         # Query SQL de pesquisa
         cursor.execute("""
             SELECT
-                pad_id, pad_created_at, pad_title, pad_owner,
+                pad_id, pad_created_at, pad_title, pad_owner, pad_is_markdown,
                 own_id, own_display_name, own_photo_url,
                 SUBSTR(pad_content, 1, 50) || '...' AS pad_content_preview
             FROM pads
@@ -50,7 +50,7 @@ def search_page():
         # Obtém o resultado
         rows = cursor.fetchall()
         pad_results = [dict(row) for row in rows]
-        
+
         # Obtém o total de registro encontrados
         pad_total = len(pad_results)
 
@@ -62,5 +62,6 @@ def search_page():
         "search.html",
         query=query,
         pad_results=pad_results,
-        pad_total=pad_total
+        pad_total=pad_total,
+        page_title=f'Pesquisando por "{query}"' if query else "Pesquisar"
     )

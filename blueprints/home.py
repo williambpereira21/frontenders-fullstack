@@ -8,6 +8,7 @@ from database import DB_NAME
 # Cria o objeto blueprint da rota
 home_bp = Blueprint('home', __name__)
 
+
 @home_bp.route("/")
 @home_bp.route("/home")  # Para não precisar alterar o JavaScript
 def home_page():
@@ -24,7 +25,7 @@ def home_page():
     # Executa a consulta
     cursor.execute('''
         SELECT
-            pad_id, pad_created_at, pad_title, pad_owner,
+            pad_id, pad_created_at, pad_title, pad_owner, pad_is_markdown,
             own_id, own_display_name, own_photo_url,
             SUBSTR(pad_content, 1, 80) || '...' AS pad_content_preview
         FROM pads

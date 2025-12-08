@@ -28,7 +28,7 @@ def ownerdata_page(uid):
 
     cursor.execute("""
         SELECT 
-            pad_id, pad_created_at, pad_title, pad_views, 
+            pad_id, pad_created_at, pad_title, pad_views, pad_is_markdown,
             SUBSTR(pad_content, 1, 80) || '...' AS pad_content_preview
         FROM pads
             WHERE pad_owner = ? AND pad_status = 'ON'
@@ -38,4 +38,4 @@ def ownerdata_page(uid):
     pads = cursor.fetchall()
     total = len(pads)
 
-    return render_template("owner.html", own=own, pads=pads, total=total)
+    return render_template("owner.html", own=own, pads=pads, total=total, page_title=f"Usuário - {own['own_display_name']}")
